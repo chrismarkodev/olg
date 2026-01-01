@@ -12,4 +12,7 @@ MY_PATH = r'./data'
 # combine the URL and a year for a given year results page
 CURRENT_YEAR = "2025"
 COMBINED_FILE = "data_all_l649"
+FILE_NAME_PATTERN = "/[0-9][0-9][0-9][0-9].csv"
+
+columns_out = ['date', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'bonus']
 

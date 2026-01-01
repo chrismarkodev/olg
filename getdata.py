@@ -14,11 +14,10 @@ import app_logging
 app_logging.init_logging()
 logger = logging.getLogger(config.APP_NAME_SHORT)
 loggerChild = logger.getChild(f"sub{__name__}")
-loggerChild.info("Application Started")
+loggerChild.info("Data retrieval started")
 
 # initialize panda frame for results
-columns_out = ['date', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'bonus']
-results_df = pd.DataFrame(columns=columns_out)
+results_df = pd.DataFrame(columns=config.columns_out)
 
 TargetURL = f"{config.RESULTS_URL}{config.CURRENT_YEAR}"
 
@@ -50,7 +49,7 @@ for result in resultsRows:
     b6 = ballsTag[5].get_text()
     bonusBallTag = result.find('li', attrs={'class':'ball bonus-ball'})
     drawBonus = bonusBallTag.get_text()
-    df = pd.DataFrame([[drawDate, b1, b2, b3, b4, b5, b6, drawBonus]], columns=columns_out)
+    df = pd.DataFrame([[drawDate, b1, b2, b3, b4, b5, b6, drawBonus]], columns=config.columns_out)
     results_df = pd.concat([results_df, df], ignore_index=True)
 
 results_df.to_csv(f"{config.MY_PATH}/{config.CURRENT_YEAR}.csv")
@@ -58,4 +57,4 @@ loggerChild.info(f"Data written to file: {config.CURRENT_YEAR}.csv")
 loggerChild.info(f"From: {results_df['date'].min().strftime('%Y-%m-%d')} To: {results_df['date'].max().strftime('%Y-%m-%d')}")
 # loggerChild.info(f"From: {results_df['date'].min()} To: {results_df['date'].max()}")
 
-loggerChild.info("Application Ended")
+loggerChild.info("Data retrieval completed")
