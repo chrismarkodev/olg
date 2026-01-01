@@ -11,4 +11,5 @@ MY_PATH = r'./data'
 # MY_PATH = r'../data'
 # combine the URL and a year for a given year results page
 CURRENT_YEAR = "2025"
+COMBINED_FILE = "data_all_l649"
 
