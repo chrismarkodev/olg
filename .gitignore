@@ -1,4 +1,8 @@
+## Ignore Python compiled files in __pycache__ directories
 **/__pycache__/
-**/.vscode/
-Lotto649 Data.log
+## Ignore Visual Studio Code settings folder
+**/.vscode/ 
+## Ignore application log files
+*.log
+## Ignore application created CSV data files
 data/*.csv
