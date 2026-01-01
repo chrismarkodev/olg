@@ -5,3 +5,10 @@ APP_NAME = 'Lotto649 Data'
 APP_NAME_SHORT = 'L649Data'
 # add year '2024' at the end of the RESULTS_URL string
 RESULTS_URL = "https://ca.lottonumbers.com/lotto-649/numbers/"
+
+# data path
+MY_PATH = r'./data'
+# MY_PATH = r'../data'
+# combine the URL and a year for a given year results page
+CURRENT_YEAR = "2025"
+
