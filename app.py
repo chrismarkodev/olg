@@ -11,7 +11,7 @@ def main():
     app_logging.init_logging()
     logger = logging.getLogger(config.APP_NAME_SHORT)
     loggerChild = logger.getChild(f"sub{__name__}")
-    loggerChild.info("Applkication started")
+    loggerChild.info("Application started")
 
 
     # Step 1: Retrieve data
