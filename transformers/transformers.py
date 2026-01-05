@@ -24,7 +24,7 @@ os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 # Load and preprocess the dataset
 # df = pd.read_csv("../data/2025.csv")
-df = pd.read_excel("../data/data_all_l649.xlsx")
+df = pd.read_csv("data/data_all_l649.csv")
 cols = ['d1', 'd2', 'd3', 'd4', 'd5', 'd6', 'bonus']
 df[cols] = df[cols].applymap(lambda x: int(str(x).strip()))
 df = df[df[cols].apply(lambda row: len(set(row)) == len(row), axis=1)].reset_index(drop=True)
