@@ -1,8 +1,0 @@
-Predicted next observation:
-d1: 4
-d2: 11
-d3: 23
-d4: 31
-d5: 41
-d6: 49
-bonus: 42

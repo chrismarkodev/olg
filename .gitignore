@@ -6,3 +6,5 @@
 *.log
 ## Ignore application created CSV data files
 data/*.csv
+## Ignore results and output files
+results/

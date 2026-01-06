@@ -19,7 +19,7 @@ import torch.nn as nn
 from torch.utils.data import Dataset, DataLoader
 import matplotlib.pyplot as plt
 
-os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+# os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 
 # Load and preprocess the dataset
@@ -81,8 +81,7 @@ optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
 # Check for CUDA device
 if not torch.cuda.is_available():
-    print("CUDA device not available. Aborting execution.")
-    sys.exit(1)
+    raise SystemExit("CUDA device not available. Aborting execution.")
 device = torch.device("cuda")
 
 # Training loop
@@ -107,7 +106,7 @@ plt.title("Training Loss Over 25 Epochs")
 plt.xlabel("Epoch")
 plt.ylabel("Loss")
 plt.grid(True)
-plt.savefig("./training_loss.png")
+plt.savefig(".results/training_loss.png")
 plt.close()
 
 # Inference on last 10 sequences
@@ -118,7 +117,7 @@ with torch.no_grad():
     predicted_values = [torch.argmax(p, dim=1).item() for p in predictions]
 
 # Save predictions
-with open("./predicted_values.txt", "w", encoding="utf-8") as f:
+with open(".results/predicted_values.txt", "w", encoding="utf-8") as f:
     f.write("Predicted next observation:\n")
     for col, val in zip(cols, predicted_values):
         f.write(f"{col}: {val}\n")

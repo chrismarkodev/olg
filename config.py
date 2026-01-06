@@ -10,7 +10,7 @@ RESULTS_URL = "https://ca.lottonumbers.com/lotto-649/numbers/"
 MY_PATH = r'./data'
 # MY_PATH = r'../data'
 # combine the URL and a year for a given year results page
-CURRENT_YEAR = "2025"
+CURRENT_YEAR = "2026"
 COMBINED_FILE = "data_all_l649"
 FILE_NAME_PATTERN = "/[0-9][0-9][0-9][0-9].csv"
 
