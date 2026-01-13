@@ -50,14 +50,17 @@ def retrieve_data():
         b6 = ballsTag[5].get_text()
         bonusBallTag = result.find('li', attrs={'class':'ball bonus-ball'})
         drawBonus = bonusBallTag.get_text()
-        df = pd.DataFrame([[drawDate, b1, b2, b3, b4, b5, b6, drawBonus]], columns=config.columns_out)
-        results_df = pd.concat([results_df, df], ignore_index=True)
+        # to eliminate FutureWarning avoid concat to an empty dataframe
+        if results_df.empty:
+            results_df.loc[0] = [drawDate, b1, b2, b3, b4, b5, b6, drawBonus]
+        else:
+            df = pd.DataFrame([[drawDate, b1, b2, b3, b4, b5, b6, drawBonus]], columns=config.columns_out)
+            results_df = pd.concat([results_df, df], ignore_index=True)
 
     results_df.to_csv(f"{config.MY_PATH}/{config.CURRENT_YEAR}.csv")
     loggerChild.info(f"Data written to file: {config.CURRENT_YEAR}.csv")
     loggerChild.info(f"From: {results_df['date'].min().strftime('%Y-%m-%d')} To: {results_df['date'].max().strftime('%Y-%m-%d')}")
-    # loggerChild.info(f"From: {results_df['date'].min()} To: {results_df['date'].max()}")
-
+    
     loggerChild.info("Data retrieval completed")
     return
 

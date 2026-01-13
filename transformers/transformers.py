@@ -13,6 +13,7 @@ and then predict next observation values in columns d1 - bonus.
 Let me know if you need additional instructions or information. 
 """
 import os
+from datetime import datetime
 import pandas as pd
 import torch
 import torch.nn as nn
@@ -26,7 +27,7 @@ import matplotlib.pyplot as plt
 # df = pd.read_csv("../data/2025.csv")
 df = pd.read_csv("data/data_all_l649.csv")
 cols = ['d1', 'd2', 'd3', 'd4', 'd5', 'd6', 'bonus']
-df[cols] = df[cols].applymap(lambda x: int(str(x).strip()))
+df[cols] = df[cols].map(lambda x: int(str(x).strip()))
 df = df[df[cols].apply(lambda row: len(set(row)) == len(row), axis=1)].reset_index(drop=True)
 
 # Create sequences of 10 observations to predict the next one
@@ -79,16 +80,21 @@ model = LotteryTransformer()
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
 
-# Check for CUDA device
-if not torch.cuda.is_available():
-    raise SystemExit("CUDA device not available. Aborting execution.")
-device = torch.device("cuda")
+# Device handling: use CUDA if available, otherwise CPU
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Using device: {device}")
+# Move model to device
+model = model.to(device)
 
 # Training loop
 losses = []
 for epoch in range(25):
     total_loss = 0  # pylint: disable=invalid-name
     for batch_x, batch_y in dataloader:
+        # Move batch tensors to device
+        batch_x = batch_x.to(device)
+        batch_y = batch_y.to(device)
+
         optimizer.zero_grad()
         outputs = model(batch_x)
         loss = sum([criterion(output, batch_y[:, i]) for i, output in enumerate(outputs)])
@@ -106,18 +112,35 @@ plt.title("Training Loss Over 25 Epochs")
 plt.xlabel("Epoch")
 plt.ylabel("Loss")
 plt.grid(True)
-plt.savefig(".results/training_loss.png")
+# Ensure results directory exists (resolve relative to repository root) and normalize path
+results_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "results"))
+os.makedirs(results_dir, exist_ok=True)
+save_path = os.path.join(results_dir, "training_loss.png")
+try:
+    plt.tight_layout()
+    plt.savefig(save_path, bbox_inches='tight')
+    print(f"Saved training loss plot to: {save_path}")
+except Exception as e:
+    print(f"Error saving training loss plot to {save_path}: {e}")
 plt.close()
 
 # Inference on last 10 sequences
 last_seq = df.iloc[-sequence_length:][cols].values.flatten()
 input_tensor = torch.tensor(last_seq, dtype=torch.long).unsqueeze(0)
 with torch.no_grad():
+    # Move input to device for inference
+    input_tensor = input_tensor.to(device)
     predictions = model(input_tensor)
-    predicted_values = [torch.argmax(p, dim=1).item() for p in predictions]
+    predicted_values = [torch.argmax(p, dim=1).cpu().item() for p in predictions]
 
 # Save predictions
-with open(".results/predicted_values.txt", "w", encoding="utf-8") as f:
+preds_path = os.path.join(results_dir, "predicted_values.txt")
+with open(preds_path, "w", encoding="utf-8") as f:
+    f.write(f"Current date: {datetime.now()} \n")
     f.write("Predicted next observation:\n")
     for col, val in zip(cols, predicted_values):
         f.write(f"{col}: {val}\n")
+if os.path.exists(preds_path):
+    print(f"Saved predictions to: {preds_path}")
+else:
+    print(f"Failed to save predictions to: {preds_path}")
