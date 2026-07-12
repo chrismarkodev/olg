@@ -46,8 +46,8 @@ X = torch.tensor(sequences, dtype=torch.long)
 y = torch.tensor(targets, dtype=torch.long)
 
 # Custom Dataset
-class LotteryDataset(Dataset):
-    """Custom Dataset for Lottery sequences."""
+class MainDataset(Dataset):
+    """Custom Dataset for data sequences."""
     def __init__(self, X, y):
         self.X = X
         self.y = y
