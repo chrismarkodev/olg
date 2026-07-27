@@ -1,0 +1,13 @@
+I have historical data for the Ontario Lotto 6/49 lottery.
+
+I have a dataset that consists of few thousands observations in and Excel file "data/data_all_l649.csv". 
+The Excel csv file has columns headings in the first row: 'date','d1', 'd2','d3','d4','d5','d6','bonus'. 
+Each subsequent row represents a single draw.
+The value in the column 'date' is the date of the draw.
+The columns d1 - d6 and bonus have values representing draw results.
+The draw numbers are identifiers, not quantities. 
+They behave like categorical labels, not numeric values with mathematical meaning.
+Each draw result is a categorical value or label that is represented by a number fro 1 to 49.
+
+A single row may not have repeating categories.
+
