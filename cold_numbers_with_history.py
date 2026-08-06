@@ -1,5 +1,5 @@
 import math
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 import csv
 
@@ -7,7 +7,7 @@ import csv
 def calculate_weight(days_ago: int) -> float:
     if days_ago <= 1:
         return 0.0
-    return 1 / math.log(days_ago)
+    return math.log(days_ago)
 
 
 def main() -> None:
@@ -25,16 +25,24 @@ def main() -> None:
 
     reference_date = datetime.now().date()
     weighted_history = {number: 0.0 for number in range(1, 50)}
-    seen = {number: False for number in range(1, 50)}
+    last_seen: dict[int, date | None] = {number: None for number in range(1, 50)}
 
     for draw_date, draw_numbers in draws:
         days_ago = (reference_date - draw_date).days
+        weight = calculate_weight(days_ago)
         for number in draw_numbers:
-            weight = calculate_weight(days_ago)
             weighted_history[number] += weight
-            seen[number] = True
+            if last_seen[number] is None or draw_date > last_seen[number]:
+                last_seen[number] = draw_date
 
-    trace_target = min(weighted_history.items(), key=lambda item: item[1])[0]
+    cold_scores = {}
+    for number in range(1, 50):
+        last_seen_date = last_seen[number]
+        if last_seen_date is not None:
+            days_since_last = (reference_date - last_seen_date).days
+            cold_scores[number] = weighted_history[number] + 5 * days_since_last
+
+    trace_target = min(cold_scores.items(), key=lambda item: item[1])[0]
     trace_contributions = []
 
     for draw_date, draw_numbers in draws:
@@ -45,13 +53,19 @@ def main() -> None:
                 trace_contributions.append((draw_date, days_ago, weight))
 
     ranked = sorted(
-        ((value, number) for number, value in weighted_history.items() if seen[number]),
+        ((cold_scores[number], number) for number in cold_scores),
         reverse=True,
     )
 
-    lines = ["Cold numbers (weighted history):"]
-    for value, number in ranked:
-        lines.append(f"{number}: {value:.4f} weighted history")
+    lines = ["Cold numbers (weighted history + last-seen age):"]
+    for score, number in ranked:
+        last_seen_date = last_seen[number]
+        if last_seen_date is None:
+            continue
+        days_since_last = (reference_date - last_seen_date).days
+        lines.append(
+            f"{number}: {score:.4f} cold score (history={weighted_history[number]:.4f}, last_seen={last_seen_date}, days_since_last={days_since_last})"
+        )
 
     trace_lines = [f"Trace for number {trace_target} (lowest weighted history):"]
     for draw_date, days_ago, weight in trace_contributions:
