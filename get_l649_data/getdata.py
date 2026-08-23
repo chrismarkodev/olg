@@ -28,7 +28,11 @@ def retrieve_data():
     loggerChild.info(f"Page Title: {soup.title}")
     # find results table, get table body and rows in the table body
     resultsTableTag = soup.find('table', attrs={'class':'mobFormat past-results'})
+    if resultsTableTag is None:
+        raise ValueError("Results table not found")
     resultsTag = resultsTableTag.find('tbody')
+    if resultsTag is None:
+        raise ValueError("Results table body not found")
     resultsRows = resultsTag.find_all('tr')
 
     # in each row find href an dextract date and then the number from all list elements
@@ -38,7 +42,10 @@ def retrieve_data():
         if len(resultsCells) == 1:
             continue
         # get the date and remove teh day of week
-        dateStrLength = len(resultsCells[0].find('strong').get_text())
+        dateHeading = resultsCells[0].find('strong')
+        if dateHeading is None:
+            raise ValueError("Draw date heading not found")
+        dateStrLength = len(dateHeading.get_text())
         drawDateTxt = resultsCells[0].get_text()[dateStrLength:]
         drawDate = datetime.strptime(drawDateTxt, "%B %d %Y")
         ballsTag = result.find_all('li', attrs={'class':'ball ball'})
@@ -49,6 +56,8 @@ def retrieve_data():
         b5 = ballsTag[4].get_text()
         b6 = ballsTag[5].get_text()
         bonusBallTag = result.find('li', attrs={'class':'ball bonus-ball'})
+        if bonusBallTag is None:
+            raise ValueError("Bonus ball not found")
         drawBonus = bonusBallTag.get_text()
         # to eliminate FutureWarning avoid concat to an empty dataframe
         if results_df.empty:

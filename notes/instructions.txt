@@ -7,7 +7,7 @@ The value in the column 'date' is the date of the draw.
 The columns d1 - d6 and bonus have values representing draw results.
 The draw numbers are identifiers, not quantities. 
 They behave like categorical labels, not numeric values with mathematical meaning.
-Each draw result is a categorical value or label that is represented by a number fro 1 to 49.
+Each individual draw result is a categorical value or label that is represented by a number from 1 to 49.
 
 A single row may not have repeating categories.
 
